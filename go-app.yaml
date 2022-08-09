@@ -1,0 +1,80 @@
+apiVersion: v1
+kind: ImageStream
+metadata:
+  name: go-app-image
+---
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: go-app-build
+spec:
+  output:
+    to:
+      kind: ImageStreamTag
+      name: go-app-image:latest
+  source:
+    git:
+      uri: https://github.com/dmartinol/ocp_route_sticky_sessions.git
+    contextDir: go-app
+    type: Git
+  strategy:
+    sourceStrategy:
+      from:
+        kind: ImageStreamTag
+        name: golang:latest
+        namespace: openshift
+    type: Source
+  triggers:
+  - type: ConfigChange
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-app
+spec:
+  replicas: 3
+  selector:    
+    matchLabels:
+      app: go-app
+  template:    
+    metadata:
+      labels:  
+        app: go-app 
+      annotations:
+        # This is required to use ImageStream images
+        alpha.image.policy.openshift.io/resolve-names: '*'
+    spec:
+      containers:
+        - name: go-app
+          image: go-app-image:latest
+          env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-app-svc
+spec:
+  selector:
+    app: go-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: go-app-route
+  annotations:
+    # The sticky session cookie
+    router.openshift.io/cookie_name: 'pod-selector'
+spec:
+  to:
+    kind: Service
+    name: go-app-svc
+  port:
+    targetPort: 8080
