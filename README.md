@@ -63,7 +63,7 @@ graph TD
 ```
 
 The application simply returns a text with a fixed message made of:
-* Pod name (taken from POOD_NAME environment variable)
+* Pod name (taken from POD_NAME environment variable)
 * Request path
 * Value of the 'pod-selector' cookie
 ```bash
