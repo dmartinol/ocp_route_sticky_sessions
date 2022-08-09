@@ -59,7 +59,7 @@ graph TD
 
    go-app-svc -.client-1.-> go-app-1
    go-app-svc -.client-2.-> go-app-3
-   go-app-svc -..-> go-app
+   go-app-svc -..-> go-app-2
 ```
 
 The application simply returns a text with a fixed message made of:
