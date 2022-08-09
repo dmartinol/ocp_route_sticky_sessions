@@ -14,18 +14,17 @@ func main() {
 		if !isSet {
 			podName = "NA"
 		}
+		log.Printf("######\nRequest received from Pod %s at path %s with cookies %v\n", podName, r.URL.Path, r.Cookies())
 		podSelector, err := r.Cookie("pod-selector")
 		if err != nil {
 			podSelector = &http.Cookie{Name: "pod-selector", Value: "N/A"}
-			log.Println("No 'pod-selector' cookie received")
-		} else {
-			log.Printf("Received 'pod-selector' cookie %s\n", podSelector.Value)
 		}
-		fmt.Println("Printing all cookies")
-		for _, c := range r.Cookies() {
-			fmt.Println(c)
-		}
-		fmt.Fprintf(w, "Response from Pod %s to path %s, with 'pod-selector' cookie: %v", podName, r.URL.Path, podSelector.Value)
+		// fmt.Println("Printing all cookies")
+		// for _, c := range r.Cookies() {
+		// 	fmt.Println(c)
+		// }
+		log.Printf("Response from Pod %s to path %s, with 'pod-selector' cookie: %v\n", podName, r.URL.Path, podSelector.Value)
+		fmt.Fprintf(w, "Response from Pod %s to path %s, with 'pod-selector' cookie: %v\n", podName, r.URL.Path, podSelector.Value)
 	})
 
 	log.Println("Listening on localhost:8080")
