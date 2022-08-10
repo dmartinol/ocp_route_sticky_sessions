@@ -32,14 +32,14 @@ graph TD
    go-app-route ----> go-app-svc
 ```
 
-The Route is configured to use the 'pod-selector' cookie to configure session persistence:
+The Route is configured to use the `pod-selector` cookie to configure session persistence:
 ```yaml
 metadata:
   annotations:
     router.openshift.io/cookie_name: 'pod-selector'
 ```
 
-This cookie ensures that all the client requests using a given cookie will be routed to the same pod:
+This cookie ensures that all the client requests using a given cookie will be routed to the same pod until the cookie expires:
 ```mermaid
 graph TD
    client-1(<b>Client</b><br/>client-1)
@@ -152,8 +152,8 @@ Result:
 ```bash
 Response from Pod go-app-dd9976d9c-25zdn to path /path, with 'pod-selector' cookie: N/A
 ```
-### ./runOnRouteAndKillThePod.sh
-The script [./runOnRouteAndKillThePod.sh](./test/runOnRouteAndKillThePod.sh) is provided to run a given number of tests on the Route host and then 
+### runOnRouteAndKillThePod.sh
+The script [runOnRouteAndKillThePod.sh](./test/runOnRouteAndKillThePod.sh) is provided to run a given number of tests on the Route host and then 
 delete the pod in the middle of the test. Use it as:
 ```bash
 runOnRouteAndKillThePod.sh <number of rounds>
